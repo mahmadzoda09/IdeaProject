@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>User Detail</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #f4ede4;
+            --card: #fffaf3;
+            --ink: #2d2a26;
+            --muted: #7a7166;
+            --accent: #c2410c;
+            --accent-hover: #9a3412;
+            --border: #e2d6c6;
+        }
+
+        body {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 40px 20px;
+            font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+            color: var(--ink);
+            background: var(--bg);
+        }
+
+        .card {
+            width: 100%;
+            max-width: 480px;
+            padding: 40px 34px 32px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(80, 55, 25, 0.10);
+        }
+
+        .profile-top {
+            text-align: center;
+            padding-bottom: 24px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .avatar {
+            width: 84px;
+            height: 84px;
+            margin: 0 auto 14px;
+            display: grid;
+            place-items: center;
+            font-family: "Playfair Display", Georgia, serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: #fff;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 6px 16px rgba(194, 65, 12, 0.3);
+        }
+
+        .profile-top h1 {
+            font-family: "Playfair Display", Georgia, serif;
+            font-size: 28px;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .profile-top .id {
+            margin-top: 4px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .details { list-style: none; }
+
+        .details li {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 16px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .details li:last-child { border-bottom: none; }
+
+        .label {
+            flex-shrink: 0;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+        }
+
+        .value {
+            font-size: 15px;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .back-btn {
+            display: block;
+            width: 100%;
+            margin-top: 24px;
+            padding: 13px;
+            font-size: 15px;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            background: var(--accent);
+            border-radius: 6px;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .back-btn:hover { background: var(--accent-hover); }
+        .back-btn:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="profile-top">
+        <div class="avatar">{{ user.username|slice:":1"|upper }}</div>
+        <h1>{{ user.username }}</h1>
+        <p class="id">ID: {{ user.id }}</p>
+    </div>
+
+    <ul class="details">
+        <li>
+            <span class="label">First name</span>
+            <span class="value">{{ user.first_name|default:"—" }}</span>
+        </li>
+        <li>
+            <span class="label">Last name</span>
+            <span class="value">{{ user.last_name|default:"—" }}</span>
+        </li>
+        <li>
+            <span class="label">Email</span>
+            <span class="value">{{ user.email|default:"—" }}</span>
+        </li>
+        <li>
+            <span class="label">Phone</span>
+            <span class="value">{{ user.phone|default:"—" }}</span>
+        </li>
+    </ul>
+
+    <a class="back-btn" href="{% url 'users' %}">Back to users</a>
+</div>
+
+</body>
+</html>

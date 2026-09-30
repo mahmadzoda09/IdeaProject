@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>All Users</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #f4ede4;
+            --card: #fffaf3;
+            --ink: #2d2a26;
+            --muted: #7a7166;
+            --accent: #c2410c;
+            --accent-hover: #9a3412;
+            --border: #e2d6c6;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 40px 20px;
+            font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+            color: var(--ink);
+            background: var(--bg);
+        }
+
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-family: "Playfair Display", Georgia, serif;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .count {
+            font-size: 14px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            background: transparent;
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .logout-btn:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--ink);
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(80, 55, 25, 0.06);
+            transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+        }
+        .user-item:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+            box-shadow: 0 8px 20px rgba(80, 55, 25, 0.12);
+        }
+
+        .avatar {
+            flex-shrink: 0;
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            font-family: "Playfair Display", Georgia, serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        .username {
+            font-size: 16px;
+            font-weight: 500;
+            word-break: break-word;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--muted);
+            background: var(--card);
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .header { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div>
+            <h1>All Users</h1>
+            <p class="count">{{ users|length }} registered</p>
+        </div>
+
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+    </div>
+
+    <div class="user-list">
+        {% for user in users %}
+            <a class="user-item" href="{% url 'user_detail' user.pk %}">
+                <span class="avatar">{{ user.username|slice:":1"|upper }}</span>
+                <span class="username">{{ user.username }}</span>
+            </a>
+        {% empty %}
+            <p class="empty">No users found.</p>
+        {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>
