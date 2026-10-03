@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Мои чаты</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --ink: #101214;
+            --muted: #6a7078;
+            --surface: #eceff2;
+            --white: #fff;
+            --line: #dde1e6;
+            --red: #f0372c;
+            --red-dark: #c92a20;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 32px 20px 64px;
+            font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+            color: var(--ink);
+            background: var(--surface);
+        }
+
+        .container { max-width: 900px; margin: 0 auto; }
+
+        /* Top bar + navigation */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+        .logo {
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+        }
+        .logo b { color: var(--red); }
+
+        .nav { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .nav a {
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--ink);
+            text-decoration: none;
+            background: var(--white);
+            border: 2px solid var(--line);
+            border-radius: 10px;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .nav a:hover { border-color: var(--ink); }
+        .nav a.nav-red { color: var(--white); background: var(--red); border-color: var(--red); }
+        .nav a.nav-red:hover { background: var(--red-dark); border-color: var(--red-dark); }
+        .nav a.nav-dark { color: var(--white); background: var(--ink); border-color: var(--ink); }
+        .nav a.nav-dark:hover { background: #2b3037; border-color: #2b3037; }
+
+        .header { margin-bottom: 28px; }
+
+        h1 {
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .chat-list { display: grid; gap: 12px; }
+
+        .chat-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 18px 20px;
+            background: var(--white);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            box-shadow: 0 6px 24px rgba(16, 18, 20, 0.06);
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+        }
+        .chat-row:hover {
+            border-color: var(--ink);
+            box-shadow: 0 12px 28px rgba(16, 18, 20, 0.11);
+            transform: translateY(-2px);
+        }
+        .chat-row:focus-within {
+            outline: 3px solid var(--red);
+            outline-offset: 3px;
+        }
+
+        .chat-row h2 {
+            overflow-wrap: anywhere;
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .open-btn {
+            flex: 0 0 auto;
+            padding: 11px 18px;
+            color: var(--white);
+            background: var(--red);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .open-btn:hover { background: var(--red-dark); }
+        .open-btn:active { transform: scale(0.98); }
+        .open-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+        .empty {
+            padding: 48px 20px;
+            color: var(--muted);
+            background: var(--white);
+            border: 2px dashed var(--line);
+            border-radius: 12px;
+            text-align: center;
+        }
+        .empty a {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 11px 18px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            background: var(--red);
+            border-radius: 8px;
+        }
+        .empty a:hover { background: var(--red-dark); }
+
+        a:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
+
+        @media (max-width: 480px) {
+            body { padding: 24px 16px 48px; }
+            .topbar { margin-bottom: 32px; }
+            h1 { font-size: 40px; }
+            .chat-row { align-items: flex-start; flex-direction: column; gap: 14px; }
+        }
+    </style>
+</head>
+<body>
+<main class="container">
+    <div class="topbar">
+        <div class="logo">Auto<b>Market</b></div>
+        <nav class="nav">
+            <a href="{% url 'cars' %}">Cars</a>
+            <a href="{% url 'brands' %}">Brands</a>
+            <a href="{% url 'models' %}">Models</a>
+            <a class="nav-red" href="{% url 'add_car' %}">Add car</a>
+            <a href="{% url 'favorites' %}">Favorites</a>
+            <a href="{% url 'my_orders' %}">Orders</a>
+            <a href="{% url 'notifications' %}">Notifications</a>
+            <a class="nav-dark" href="{% url 'user_detail' request.user.pk %}">Profile</a>
+            <a class="nav-dark" href="{% url 'logout' %}">Logout</a>
+        </nav>
+    </div>
+
+    <header class="header">
+        <h1>My Chats</h1>
+    </header>
+
+    <div class="chat-list">
+        {% for chat in chats %}
+            <article class="chat-row">
+                {% if chat.user1 == request.user %}
+                    <h2>{{ chat.user2.username }}</h2>
+                {% else %}
+                    <h2>{{ chat.user1.username }}</h2>
+                {% endif %}
+                <a class="open-btn" href="{% url 'chat' chat.id %}">Open Chat</a>
+            </article>
+        {% empty %}
+            <div class="empty">
+                <p>You don't have any chats yet.</p>
+                <a href="{% url 'cars' %}">View Cars</a>
+            </div>
+        {% endfor %}
+    </div>
+</main>
+</body>
+</html>

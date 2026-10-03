@@ -3,152 +3,398 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>User Detail</title>
+    <title>{{ user.username }} · Profile</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --bg: #f4ede4;
-            --card: #fffaf3;
-            --ink: #2d2a26;
-            --muted: #7a7166;
-            --accent: #c2410c;
-            --accent-hover: #9a3412;
-            --border: #e2d6c6;
+            --ink: #101214;
+            --muted: #6a7078;
+            --surface: #eceff2;
+            --white: #fff;
+            --line: #dde1e6;
+            --red: #f0372c;
+            --red-dark: #c92a20;
         }
 
         body {
             min-height: 100vh;
-            display: grid;
-            place-items: center;
-            padding: 40px 20px;
-            font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+            padding: 32px 20px 64px;
+            font-family: "Manrope", "Segoe UI", Arial, sans-serif;
             color: var(--ink);
-            background: var(--bg);
+            background: var(--surface);
         }
 
-        .card {
-            width: 100%;
-            max-width: 480px;
-            padding: 40px 34px 32px;
-            background: var(--card);
-            border: 1px solid var(--border);
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        /* Top bar + navigation */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+        .logo {
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: -0.5px;
+        }
+        .logo b { color: var(--red); }
+
+        .nav { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .nav a {
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--ink);
+            text-decoration: none;
+            background: var(--white);
+            border: 2px solid var(--line);
             border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(80, 55, 25, 0.10);
+            transition: border-color 0.2s;
         }
+        .nav a:hover { border-color: var(--ink); }
+        .nav a.nav-red { color: var(--white); background: var(--red); border-color: var(--red); }
+        .nav a.nav-red:hover { background: var(--red-dark); border-color: var(--red-dark); }
 
-        .profile-top {
-            text-align: center;
-            padding-bottom: 24px;
-            margin-bottom: 8px;
-            border-bottom: 1px solid var(--border);
+        /* ---------- Profile header ---------- */
+        .profile {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 18px 50px rgba(16, 18, 20, 0.10);
         }
-
+        .cover {
+            height: 190px;
+            background:
+                repeating-linear-gradient(90deg, rgba(255,255,255,0.12) 0 28px, transparent 28px 56px),
+                linear-gradient(135deg, var(--red), #ff7a59);
+        }
+        .profile-main {
+            display: flex;
+            align-items: flex-end;
+            gap: 24px;
+            flex-wrap: wrap;
+            padding: 0 32px 28px;
+        }
         .avatar {
-            width: 84px;
-            height: 84px;
-            margin: 0 auto 14px;
+            width: 132px;
+            height: 132px;
+            flex-shrink: 0;
+            margin-top: -66px;
             display: grid;
             place-items: center;
-            font-family: "Playfair Display", Georgia, serif;
-            font-size: 36px;
-            font-weight: 700;
-            color: #fff;
-            background: var(--accent);
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-size: 56px;
+            font-weight: 800;
+            color: var(--white);
+            background: var(--ink);
+            border: 6px solid var(--white);
             border-radius: 50%;
-            box-shadow: 0 6px 16px rgba(194, 65, 12, 0.3);
         }
-
-        .profile-top h1 {
-            font-family: "Playfair Display", Georgia, serif;
-            font-size: 28px;
-            font-weight: 700;
+        .who { flex: 1; min-width: 200px; padding-top: 14px; }
+        .who h1 {
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-size: clamp(28px, 4vw, 38px);
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.1;
             word-break: break-word;
         }
+        .who .handle { margin-top: 6px; font-size: 15px; color: var(--muted); }
 
-        .profile-top .id {
-            margin-top: 4px;
-            font-size: 13px;
-            color: var(--muted);
-        }
-
-        .details { list-style: none; }
-
-        .details li {
+        .stats {
             display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            gap: 16px;
-            padding: 14px 0;
-            border-bottom: 1px solid var(--border);
+            gap: 28px;
+            margin-top: 14px;
         }
-        .details li:last-child { border-bottom: none; }
+        .stat strong {
+            display: block;
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .stat span { font-size: 13px; color: var(--muted); }
 
-        .label {
+        .profile-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 13px 22px;
+            font-size: 15px;
+            font-weight: 700;
+            text-decoration: none;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            transition: background 0.2s, border-color 0.2s, transform 0.1s;
+        }
+        .btn svg { width: 18px; height: 18px; }
+        .btn:active { transform: scale(0.98); }
+        .btn-dark { color: var(--white); background: var(--ink); border-color: var(--ink); }
+        .btn-dark:hover { background: #2b3037; border-color: #2b3037; }
+        .btn-red { color: var(--white); background: var(--red); border-color: var(--red); }
+        .btn-red:hover { background: var(--red-dark); border-color: var(--red-dark); }
+        .btn-light { color: var(--ink); background: var(--white); border-color: var(--line); }
+        .btn-light:hover { border-color: var(--ink); }
+        .btn-danger { color: var(--red); background: var(--white); border-color: var(--red); }
+        .btn-danger:hover { color: var(--white); background: var(--red); }
+
+        /* ---------- Body: about + cars ---------- */
+        .body {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 28px;
+            align-items: start;
+            margin-top: 28px;
+        }
+
+        .panel {
+            padding: 26px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 18px 50px rgba(16, 18, 20, 0.10);
+        }
+        .panel h2 {
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+            margin-bottom: 8px;
+        }
+        .about { position: sticky; top: 24px; }
+
+        .info { list-style: none; }
+        .info li {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--line);
+        }
+        .info li:last-child { border-bottom: none; }
+        .info .ico {
+            width: 38px;
+            height: 38px;
             flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            color: var(--red);
+            background: var(--surface);
+            border-radius: 10px;
+        }
+        .info .ico svg { width: 18px; height: 18px; }
+        .info small { display: block; font-size: 12px; color: var(--muted); }
+        .info strong { font-size: 15px; word-break: break-word; }
+
+        .panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .panel-head h2 { margin-bottom: 0; }
+        .count {
+            padding: 4px 12px;
             font-size: 13px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-weight: 700;
+            color: var(--muted);
+            background: var(--surface);
+            border-radius: 999px;
+        }
+
+        /* Car rows */
+        .car-list { list-style: none; }
+        .car-row {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 16px 0;
+            color: inherit;
+            text-decoration: none;
+            border-bottom: 1px solid var(--line);
+        }
+        .car-list li:last-child .car-row { border-bottom: none; padding-bottom: 0; }
+        .car-thumb {
+            width: 150px;
+            aspect-ratio: 4 / 3;
+            flex-shrink: 0;
+            object-fit: cover;
+            display: block;
+            background: var(--surface);
+            border-radius: 12px;
+        }
+        .car-thumb.none {
+            display: grid;
+            place-items: center;
+            font-size: 13px;
             color: var(--muted);
         }
-
-        .value {
-            font-size: 15px;
-            text-align: right;
-            word-break: break-word;
+        .car-info { flex: 1; min-width: 0; }
+        .car-title {
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .car-row:hover .car-title { color: var(--red); }
+        .car-meta { margin-top: 4px; font-size: 14px; color: var(--muted); }
+        .car-price {
+            flex-shrink: 0;
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--red);
         }
 
-        .back-btn {
-            display: block;
-            width: 100%;
-            margin-top: 24px;
-            padding: 13px;
-            font-size: 15px;
-            font-weight: 600;
+        .no-cars {
+            margin-top: 12px;
+            padding: 40px 20px;
             text-align: center;
-            text-decoration: none;
-            color: #fff;
-            background: var(--accent);
-            border-radius: 6px;
-            transition: background 0.2s, transform 0.1s;
+            color: var(--muted);
+            border: 2px dashed var(--line);
+            border-radius: 16px;
         }
-        .back-btn:hover { background: var(--accent-hover); }
-        .back-btn:active { transform: scale(0.98); }
+
+        a:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
+
+        @media (max-width: 860px) {
+            .body { grid-template-columns: 1fr; }
+            .about { position: static; }
+        }
+        @media (max-width: 560px) {
+            body { padding: 20px 12px 40px; }
+            .cover { height: 130px; }
+            .profile-main { padding: 0 20px 24px; flex-direction: column; align-items: flex-start; gap: 12px; }
+            .avatar { width: 104px; height: 104px; margin-top: -52px; font-size: 44px; }
+            .who { padding-top: 0; }
+            .panel { padding: 20px 18px; }
+            .car-row { flex-wrap: wrap; }
+            .car-thumb { width: 110px; }
+            .car-price { width: 100%; font-size: 20px; }
+        }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div class="profile-top">
-        <div class="avatar">{{ user.username|slice:":1"|upper }}</div>
-        <h1>{{ user.username }}</h1>
-        <p class="id">ID: {{ user.id }}</p>
+<div class="container">
+    <div class="topbar">
+        <div class="logo">Auto<b>Market</b></div>
+        <nav class="nav">
+            <a href="{% url 'users' %}">← All users</a>
+            <a class="nav-red" href="{% url 'cars' %}">Cars</a>
+        </nav>
     </div>
 
-    <ul class="details">
-        <li>
-            <span class="label">First name</span>
-            <span class="value">{{ user.first_name|default:"—" }}</span>
-        </li>
-        <li>
-            <span class="label">Last name</span>
-            <span class="value">{{ user.last_name|default:"—" }}</span>
-        </li>
-        <li>
-            <span class="label">Email</span>
-            <span class="value">{{ user.email|default:"—" }}</span>
-        </li>
-        <li>
-            <span class="label">Phone</span>
-            <span class="value">{{ user.phone|default:"—" }}</span>
-        </li>
-    </ul>
+    {% with cars=user.owners.all %}
 
-    <a class="back-btn" href="{% url 'users' %}">Back to users</a>
+    <!-- Profile header -->
+    <section class="profile">
+        <div class="cover"></div>
+        <div class="profile-main">
+            <div class="avatar">{{ user.username|slice:":1"|upper }}</div>
+
+            <div class="who">
+                <h1>{% if user.first_name or user.last_name %}{{ user.first_name }} {{ user.last_name }}{% else %}{{ user.username }}{% endif %}</h1>
+                <p class="handle">@{{ user.username }} · ID {{ user.id }}</p>
+                <div class="stats">
+                    <div class="stat"><strong>{{ cars|length }}</strong><span>Cars listed</span></div>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                {% if request.user.is_authenticated %}
+                    {% if request.user.id == user.id %}
+                        <!-- my own profile -->
+                        <a class="btn btn-red" href="{% url 'add_car' %}">+ Add car</a>
+                        <a class="btn btn-dark" href="{% url 'my_chats' %}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>
+                            My chats
+                        </a>
+                        <a class="btn btn-light" href="{% url 'my_orders' %}">My orders</a>
+                        <a class="btn btn-light" href="{% url 'favorites' %}">Favorites</a>
+                        <a class="btn btn-light" href="{% url 'notifications' %}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+                            Notifications
+                        </a>
+                        <a class="btn btn-danger" href="{% url 'logout' %}">Logout</a>
+                    {% else %}
+                        <!-- someone else's profile -->
+                        <a class="btn btn-red" href="{% url 'start_chat' user.id %}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>
+                            Message
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <a class="btn btn-dark" href="{% url 'login' %}">Login to message</a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <div class="body">
+        <!-- About -->
+        <aside class="panel about">
+            <h2>About</h2>
+            <ul class="info">
+                <li>
+                    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></span>
+                    <div><small>Full name</small><strong>{% if user.first_name or user.last_name %}{{ user.first_name }} {{ user.last_name }}{% else %}—{% endif %}</strong></div>
+                </li>
+                <li>
+                    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
+                    <div><small>Email</small><strong>{{ user.email|default:"—" }}</strong></div>
+                </li>
+                <li>
+                    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></span>
+                    <div><small>Phone</small><strong>{{ user.phone|default:"—" }}</strong></div>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Cars -->
+        <section class="panel">
+            <div class="panel-head">
+                <h2>Cars</h2>
+                <span class="count">{{ cars|length }}</span>
+            </div>
+
+            {% if cars %}
+                <ul class="car-list">
+                    {% for car in cars %}
+                        <li>
+                            <a class="car-row" href="{% url 'car_detail' car.pk %}">
+                                {% if car.images.all %}
+                                    <img class="car-thumb" src="{{ car.images.all.0.image.url }}" alt="{{ car.brand }} {{ car.model }}">
+                                {% else %}
+                                    <div class="car-thumb none">No photo</div>
+                                {% endif %}
+                                <div class="car-info">
+                                    <div class="car-title">{{ car.brand }} {{ car.model }}</div>
+                                    <div class="car-meta">{{ car.year }} · {{ car.location }}</div>
+                                </div>
+                                <div class="car-price">{{ car.price }} SM</div>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="no-cars">No cars listed yet.</p>
+            {% endif %}
+        </section>
+    </div>
+
+    {% endwith %}
 </div>
 
 </body>

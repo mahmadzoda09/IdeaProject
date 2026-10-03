@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ car.brand }} {{ car.model }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --ink: #101214;
+            --muted: #6a7078;
+            --surface: #eceff2;
+            --white: #fff;
+            --line: #dde1e6;
+            --red: #f0372c;
+            --red-dark: #c92a20;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 32px 20px 64px;
+            font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+            color: var(--ink);
+            background: var(--surface);
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        /* Top bar + navigation */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+        .logo {
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: -0.5px;
+        }
+        .logo b { color: var(--red); }
+
+        .nav { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .nav a {
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--ink);
+            text-decoration: none;
+            background: var(--white);
+            border: 2px solid var(--line);
+            border-radius: 10px;
+            transition: border-color 0.2s, background 0.2s, color 0.2s;
+        }
+        .nav a:hover { border-color: var(--ink); }
+        .nav a.nav-red { color: var(--white); background: var(--red); border-color: var(--red); }
+        .nav a.nav-red:hover { background: var(--red-dark); border-color: var(--red-dark); }
+        .nav a.nav-dark { color: var(--white); background: var(--ink); border-color: var(--ink); }
+        .nav a.nav-dark:hover { background: #2b3037; border-color: #2b3037; }
+
+        /* Title row */
+        .title-row {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+        h1 {
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 800;
+            letter-spacing: -1.8px;
+            line-height: 1;
+        }
+        .price {
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: var(--red);
+        }
+
+        /* Two-column layout */
+        .layout {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 28px;
+            align-items: start;
+        }
+        .main-col {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            min-width: 0;
+        }
+
+        /* Cards */
+        .card {
+            padding: 28px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 18px 50px rgba(16, 18, 20, 0.10);
+        }
+        .card h2 {
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+            margin-bottom: 14px;
+        }
+
+        /* Gallery */
+        .gallery-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .gallery-head h2 { margin-bottom: 0; }
+
+        .add-photo {
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            background: var(--red);
+            border-radius: 10px;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .add-photo:hover { background: var(--red-dark); }
+        .add-photo:active { transform: scale(0.98); }
+
+        .main-photo {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            object-fit: cover;
+            display: block;
+            background: var(--surface);
+            border-radius: 16px;
+        }
+
+        .thumbs {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .thumbs button {
+            padding: 0;
+            border: 3px solid transparent;
+            border-radius: 12px;
+            background: none;
+            cursor: pointer;
+            overflow: hidden;
+            opacity: 0.7;
+            transition: opacity 0.2s, border-color 0.2s;
+        }
+        .thumbs button:hover { opacity: 1; }
+        .thumbs button.active { opacity: 1; border-color: var(--red); }
+        .thumbs img {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            display: block;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 64px 20px;
+            color: var(--muted);
+            background: var(--surface);
+            border: 2px dashed var(--line);
+            border-radius: 16px;
+        }
+
+        /* Description */
+        .description p {
+            font-family: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.9;
+            color: #2b3037;
+            white-space: pre-line;
+            word-break: break-word;
+        }
+        .description p strong {
+            font-weight: 600;
+            color: var(--red);
+        }
+
+        /* Info card (sticky) */
+        .info {
+            position: sticky;
+            top: 24px;
+            border-top: 6px solid var(--red);
+        }
+
+        .specs { list-style: none; }
+        .specs li {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 16px;
+            padding: 13px 0;
+            border-bottom: 1px solid var(--line);
+        }
+        .specs li:last-child { border-bottom: none; }
+        .specs .label { font-size: 14px; color: var(--muted); }
+        .specs .value {
+            font-size: 16px;
+            font-weight: 700;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .owner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 18px;
+            padding: 14px 16px;
+            background: var(--surface);
+            border-radius: 14px;
+        }
+        .owner .avatar {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-weight: 800;
+            color: var(--white);
+            background: var(--ink);
+            border-radius: 50%;
+        }
+        .owner small { display: block; font-size: 12px; color: var(--muted); }
+        .owner strong { font-size: 16px; }
+
+        /* Buy button */
+        .buy-form { margin-top: 18px; }
+        .buy-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 15px 18px;
+            font: inherit;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--white);
+            background: var(--ink);
+            border: 2px solid var(--ink);
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 10px 24px rgba(16, 18, 20, 0.22);
+            transition: background 0.2s, border-color 0.2s, transform 0.1s;
+        }
+        .buy-btn svg { width: 20px; height: 20px; }
+        .buy-btn:hover { background: #2b3037; border-color: #2b3037; }
+        .buy-btn:active { transform: scale(0.98); }
+.buy-btn.done {
+            margin-top: 18px;
+            color: var(--muted);
+            text-decoration: none;
+            background: var(--surface);
+            border-color: var(--line);
+            box-shadow: none;
+        }
+        .buy-btn.done:hover { border-color: var(--ink); color: var(--ink); background: var(--surface); }
+
+        /* Chat button */
+        .chat-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 10px;
+            padding: 15px 18px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            background: var(--red);
+            border: 2px solid var(--red);
+            border-radius: 12px;
+            box-shadow: 0 10px 24px rgba(240, 55, 44, 0.28);
+            transition: background 0.2s, border-color 0.2s, transform 0.1s, box-shadow 0.2s;
+        }
+        .chat-btn svg { width: 20px; height: 20px; }
+        .chat-btn:hover {
+            background: var(--red-dark);
+            border-color: var(--red-dark);
+            box-shadow: 0 12px 28px rgba(201, 42, 32, 0.34);
+        }
+        .chat-btn:active { transform: scale(0.98); }
+
+        /* Favorite button */
+        .fav-form { margin-top: 10px; }
+        .fav-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px 18px;
+            font: inherit;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--ink);
+            background: var(--white);
+            border: 2px solid var(--line);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.1s;
+        }
+        .fav-btn svg { width: 20px; height: 20px; fill: none; transition: fill 0.2s, color 0.2s; }
+        .fav-btn:hover { color: var(--red); border-color: var(--red); }
+        .fav-btn:active { transform: scale(0.98); }
+        .fav-btn.is-fav {
+            color: var(--red);
+            background: #fff1f0;
+            border-color: var(--red);
+        }
+        .fav-btn.is-fav svg { fill: var(--red); }
+
+        /* Delete button */
+        .danger-zone {
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid var(--line);
+        }
+        .delete-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--red);
+            text-decoration: none;
+            background: var(--white);
+            border: 2px solid var(--red);
+            border-radius: 12px;
+            transition: background 0.2s, color 0.2s, transform 0.1s;
+        }
+        .delete-btn svg { width: 18px; height: 18px; }
+        .delete-btn:hover { color: var(--white); background: var(--red); }
+        .delete-btn:active { transform: scale(0.98); }
+
+        a:focus-visible, button:focus-visible {
+            outline: 3px solid var(--red);
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 860px) {
+            .layout { grid-template-columns: 1fr; }
+            .info { position: static; }
+        }
+        @media (max-width: 480px) {
+            .card { padding: 22px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="topbar">
+        <div class="logo">Auto<b>Market</b></div>
+        <nav class="nav">
+            <a href="{% url 'cars' %}">Cars</a>
+            <a href="{% url 'brands' %}">Brands</a>
+            <a href="{% url 'models' %}">Models</a>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'favorites' %}">Favorites</a>
+                <a href="{% url 'my_chats' %}">Chats</a>
+                <a href="{% url 'my_orders' %}">Orders</a>
+                <a href="{% url 'notifications' %}">Notifications</a>
+                <a class="nav-red" href="{% url 'add_car' %}">+ Add car</a>
+                <a class="nav-dark" href="{% url 'user_detail' request.user.pk %}">Profile</a>
+                <a class="nav-dark" href="{% url 'logout' %}">Logout</a>
+            {% else %}
+                <a class="nav-dark" href="{% url 'login' %}">Login</a>
+                <a class="nav-red" href="{% url 'register' %}">Register</a>
+            {% endif %}
+        </nav>
+    </div>
+
+    <div class="title-row">
+        <h1>{{ car.model }}</h1>
+        <div class="price">{{ car.price }} SM</div>
+    </div>
+
+    <div class="layout">
+        <!-- LEFT: photos + description -->
+        <div class="main-col">
+            <section class="card">
+                <div class="gallery-head">
+                    <h2>Photos</h2>
+                    {% if request.user == car.owner %}
+                        <a class="add-photo" href="{% url 'car_image_add' car.pk %}">Add photo</a>
+                    {% endif %}
+                </div>
+
+                {% if car.images.all %}
+                    <img id="mainPhoto" class="main-photo" src="{{ car.images.all.0.image.url }}" alt="{{ car.brand }} {{ car.model }}">
+
+                    {% if car.images.all|length > 1 %}
+                        <div class="thumbs">
+                            {% for image in car.images.all %}
+                                <button type="button" class="{% if forloop.first %}active{% endif %}" data-src="{{ image.image.url }}" aria-label="Photo {{ forloop.counter }}">
+                                    <img src="{{ image.image.url }}" alt="">
+                                </button>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p class="empty">No photos yet.</p>
+                {% endif %}
+            </section>
+
+            <section class="card description">
+                <h2>Description</h2>
+                <p>{{ car.description }}</p>
+            </section>
+        </div>
+
+        <!-- RIGHT: details (sticky) -->
+        <aside class="card info">
+            <h2>Details</h2>
+            <ul class="specs">
+                <li><span class="label">Brand</span><span class="value">{{ car.brand.name }}</span></li>
+                <li><span class="label">Model</span><span class="value">{{ car.model.name }}</span></li>
+                <li><span class="label">Year</span><span class="value">{{ car.year }}</span></li>
+                <li><span class="label">Fuel</span><span class="value">{{ car.get_fuel_type_display }}</span></li>
+                <li><span class="label">Transmission</span><span class="value">{{ car.get_transmission_display }}</span></li>
+                <li><span class="label">Color</span><span class="value">{{ car.color }}</span></li>
+                <li><span class="label">Location</span><span class="value">{{ car.location }}</span></li>
+            </ul>
+            <div class="owner">
+                <span class="avatar">{{ car.owner.username|slice:":1"|upper }}</span>
+                <div>
+                    <small>Owner</small>
+                    <strong>{{ car.owner.username }}</strong>
+                </div>
+            </div>
+
+            {% if request.user != car.owner %}
+                {% if request.user.is_authenticated %}
+                    {% if already_ordered %}
+                        <a class="buy-btn done" href="{% url 'my_orders' %}">✓ Already ordered · View my orders</a>
+                    {% else %}
+                        <form class="buy-form" method="post" action="{% url 'buy_car' car.pk %}"
+                              onsubmit="this.querySelector('button').disabled = true;">
+                            {% csrf_token %}
+                            <button class="buy-btn" type="submit">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.1a2 2 0 0 0 2-1.5L21.5 8H6"/></svg>
+                                Buy this car
+                            </button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+
+                <a class="chat-btn" href="{% url 'start_chat' car.owner.id %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>
+                    Chat with owner
+                </a>
+
+                {% if request.user.is_authenticated %}
+                    <form class="fav-form" method="post" action="{% url 'favorite' car.pk %}">
+                        {% csrf_token %}
+                        {% if is_favorite %}
+                            <button class="fav-btn is-fav" type="submit">
+                                <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 5.6a5.2 5.2 0 0 0-7.4 0L12 7l-1.4-1.4a5.2 5.2 0 0 0-7.4 7.4L12 21.8l8.8-8.8a5.2 5.2 0 0 0 0-7.4z"/></svg>
+                                Remove from favorites
+                            </button>
+                        {% else %}
+                            <button class="fav-btn" type="submit">
+                                <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 5.6a5.2 5.2 0 0 0-7.4 0L12 7l-1.4-1.4a5.2 5.2 0 0 0-7.4 7.4L12 21.8l8.8-8.8a5.2 5.2 0 0 0 0-7.4z"/></svg>
+                                Add to favorites
+                            </button>
+                        {% endif %}
+                    </form>
+                {% endif %}
+            {% endif %}
+
+            {% if request.user == car.owner %}
+                <div class="danger-zone">
+                    <a class="delete-btn" href="{% url 'car_delete' car.pk %}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg>
+                        Delete this listing
+                    </a>
+                </div>
+            {% endif %}
+        </aside>
+    </div>
+</div>
+
+<script>
+    (function () {
+        // Bold the "Label:" part of each description line
+        var p = document.querySelector('.description p');
+        if (p) {
+            var esc = function (t) {
+                return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            };
+            p.innerHTML = p.textContent.split('\n').map(function (line) {
+                var i = line.indexOf(':');
+                if (i === -1) return esc(line);
+                return '<strong>' + esc(line.slice(0, i)) + '</strong>' + esc(line.slice(i));
+            }).join('\n');
+        }
+
+        // Thumbnail click swaps the main photo
+        var main = document.getElementById('mainPhoto');
+        var buttons = document.querySelectorAll('.thumbs button');
+        buttons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                main.src = btn.dataset.src;
+                buttons.forEach(function (b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+            });
+        });
+    })();
+</script>
+
+</body>
+</html>

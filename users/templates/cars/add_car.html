@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add Model</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --ink: #101214;
+            --muted: #6a7078;
+            --surface: #eceff2;
+            --white: #fff;
+            --line: #dde1e6;
+            --red: #f0372c;
+            --red-dark: #c92a20;
+            --danger: #c2251b;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            padding: 20px;
+            font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+            color: var(--ink);
+            background: var(--surface);
+        }
+
+        .logo {
+            width: 100%;
+            max-width: 1100px;
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: -0.5px;
+        }
+        .logo b { color: var(--red); }
+
+        .card {
+            width: 100%;
+            max-width: 460px;
+            padding: 28px 32px 26px;
+            background: var(--white);
+            border-radius: 20px;
+            border-top: 6px solid var(--red);
+            box-shadow: 0 18px 50px rgba(16, 18, 20, 0.12);
+        }
+
+        .card h1 {
+            font-family: "Bricolage Grotesque", sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -1.2px;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: var(--muted);
+            margin-bottom: 20px;
+        }
+
+        form p {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 14px;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="url"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            font-family: inherit;
+            font-size: 16px;
+            color: var(--ink);
+            background: var(--white);
+            border: 2px solid var(--line);
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        textarea { min-height: 110px; resize: vertical; }
+        input:hover, select:hover, textarea:hover { border-color: #c4cad1; }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--ink);
+            box-shadow: 0 0 0 4px rgba(240, 55, 44, 0.18);
+        }
+
+        .helptext {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        .errorlist {
+            list-style: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--danger);
+            background: #fdeceb;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 8px;
+            padding: 13px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            background: var(--red);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        button:hover { background: var(--red-dark); }
+        button:active { transform: scale(0.98); }
+        button:focus-visible {
+            outline: 3px solid var(--ink);
+            outline-offset: 3px;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .actions button { width: 100%; margin-top: 0; }
+
+        .quick-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 0 0 20px;
+        }
+        .quick-links a {
+            flex: 1 1 auto;
+            padding: 10px 12px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--ink);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .quick-links a:hover { border-color: var(--ink); background: var(--white); }
+        .quick-links a:focus-visible {
+            outline: 3px solid var(--ink);
+            outline-offset: 2px;
+        }
+
+        .cancel-btn {
+            display: grid;
+            place-items: center;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--ink);
+            background: var(--white);
+            border: 2px solid var(--line);
+            border-radius: 10px;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .cancel-btn:hover { border-color: var(--ink); }
+        .cancel-btn:focus-visible {
+            outline: 3px solid var(--ink);
+            outline-offset: 3px;
+        }
+
+        @media (max-height: 640px) {
+            body { gap: 10px; padding: 12px 20px; }
+            .card { padding: 20px 26px 20px; }
+            .card h1 { font-size: 30px; }
+            .subtitle { margin-bottom: 14px; }
+            form p { margin-bottom: 10px; }
+            input[type="text"], input[type="email"], input[type="number"],
+            input[type="url"], input[type="file"], select { padding: 9px 12px; }
+        }
+
+        @media (max-width: 480px) {
+            .card { padding: 24px 20px 22px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="logo">Auto<b>Market</b></div>
+
+<div class="card">
+    <h1>Add Model</h1>
+    <p class="subtitle">Choose a brand and add a new car model</p>
+
+    <nav class="quick-links" aria-label="Useful links">
+        <a href="{% url 'brands' %}">Brands</a>
+        <a href="{% url 'add_model' %}">Add model</a>
+        <a href="{% url 'models' %}">Models</a>
+        <a href="{% url 'cars' %}">Marketplace</a>
+    </nav>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="actions">
+            <button type="submit">Add</button>
+            <a class="cancel-btn" href="/" onclick="history.back(); return false;">Cancel</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
