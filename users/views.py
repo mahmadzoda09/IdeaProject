@@ -22,7 +22,7 @@ class RegisterView(CreateView):
 class UserLoginView(LoginView):
     template_name = "users/login.html"
     redirect_authenticated_user = True
-    next_page = reverse_lazy("users")
+    next_page = reverse_lazy("cars")
 
 class UserLogoutView(LoginRequiredMixin ,LogoutView):
     next_page = reverse_lazy("login")
@@ -88,7 +88,6 @@ class CarView(LoginRequiredMixin ,ListView):
         qs = Car.objects.select_related("brand", "model")
         g = self.request.GET
  
-        # --- search (brand, model, description) ---
         q = g.get("q", "").strip()
         if q:
             qs = qs.filter(
@@ -97,7 +96,6 @@ class CarView(LoginRequiredMixin ,ListView):
                 | Q(description__icontains=q)
             )
  
-        # --- checkbox filters (several values allowed) ---
         brands = g.getlist("brand")
         if brands:
             qs = qs.filter(brand_id__in=brands)
